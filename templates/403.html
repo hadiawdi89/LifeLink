@@ -1,0 +1,9 @@
+{% extends "base_admin.html" %}
+{% block title %}403 — Forbidden — LifeLink{% endblock %}
+{% block admin_body %}
+  <div class="card" style="text-align:center;">
+    <h1 style="font-size:2.4rem;color:#C1121F;">403 — Forbidden</h1>
+    <p>You don't have permission to view this page. Admin access is required.</p>
+    <a class="btn" href="{{ url_for('pages.index') }}">Back to Home</a>
+  </div>
+{% endblock %}

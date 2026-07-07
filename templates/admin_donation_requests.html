@@ -1,0 +1,39 @@
+{% extends "base_admin.html" %}
+{% block title %}Donation Requests — LifeLink Admin{% endblock %}
+{% block admin_body %}
+  <h1>User‑to‑User Donation Requests</h1>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Sender</th><th>Donor</th><th>Blood Type</th><th>Message</th><th>Status</th><th>Created</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for req in requests %}
+        <tr>
+          <td>{{ req.id }}</td>
+          <td>{{ req.sender.full_name }} ({{ req.sender.email }})</td>
+          <td>{{ req.donor.full_name }} ({{ req.donor.email }})</td>
+          <td>{{ req.blood_type }}</td>
+          <td>{{ req.message or "—" }}</td>
+          <td>{{ req.status }}</td>
+          <td>{{ req.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+          <td>
+            {% if req.status == "pending" %}
+              <form method="POST" action="{{ url_for('admin.handle_donation_request', req_id=req.id, action='approve') }}" style="display:inline;">
+                <button class="btn btn--ghost" type="submit" style="background:#28a745; color:white;">Approve</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin.handle_donation_request', req_id=req.id, action='reject') }}" style="display:inline;">
+                <button class="btn btn--ghost" type="submit" style="background:#dc3545; color:white;">Reject</button>
+              </form>
+            {% else %}
+              —
+            {% endif %}
+           </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8">No donation requests yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

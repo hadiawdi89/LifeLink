@@ -1,0 +1,9 @@
+{% extends "base_admin.html" %}
+{% block title %}404 — Page Not Found — LifeLink{% endblock %}
+{% block admin_body %}
+  <div class="card" style="text-align:center;">
+    <h1 style="font-size:2.4rem;color:#C1121F;">404 — Page Not Found</h1>
+    <p>The page you're looking for doesn't exist.</p>
+    <a class="btn" href="{{ url_for('pages.index') }}">Back to Home</a>
+  </div>
+{% endblock %}

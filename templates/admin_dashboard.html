@@ -1,0 +1,15 @@
+{% extends "base_admin.html" %}
+{% block title %}Admin Dashboard — LifeLink{% endblock %}
+{% block admin_body %}
+  <h1>Admin Dashboard</h1>
+  <div class="grid">
+    <div class="stat"><b>{{ stats.donors }}</b> Donors</div>
+    <div class="stat"><b>{{ stats.receivers }}</b> Receivers</div>
+    <div class="stat"><b>{{ stats.admins }}</b> Admins</div>
+  </div>
+  <div class="card" style="margin-top:20px;">
+    <a class="btn" href="{{ url_for('admin.users') }}">Manage users</a>
+    <a class="btn" href="{{ url_for('admin.donation_requests') }}">View donation requests</a>
+    <a class="btn" href="{{ url_for('admin.statistics') }}">Blood-type statistics</a>
+  </div>
+{% endblock %}

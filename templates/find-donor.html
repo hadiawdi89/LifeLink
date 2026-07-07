@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}Find a Donor — LifeLink{% endblock %}
+{% block description %}Find a blood donor near you — search LifeLink by blood type, city, urgency, and availability across Lebanon.{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/find-donor.css') }}" />
+{% endblock %}
+
+{% block content %}
+
+  <!-- donor data from the database, dropped into data attributes for the js to read (split by | ) -->
+  <div id="donorSeed" hidden
+  data-ids="{% for d in donors %}{{ d.id }}{% if not loop.last %}|{% endif %}{% endfor %}"
+  data-names="{% for d in donors %}{{ d.full_name }}{% if not loop.last %}|{% endif %}{% endfor %}"
+  data-blood="{% for d in donors %}{{ d.blood_type }}{% if not loop.last %}|{% endif %}{% endfor %}"
+  data-city="{% for d in donors %}{{ d.city }}{% if not loop.last %}|{% endif %}{% endfor %}"
+  data-status="{% for d in donors %}{{ d.status }}{% if not loop.last %}|{% endif %}{% endfor %}"
+  data-days="{% for d in donors %}{{ d.days_since_last_donation() }}{% if not loop.last %}|{% endif %}{% endfor %}"
+  data-response="{% for d in donors %}{{ d.avg_response_min or 0 }}{% if not loop.last %}|{% endif %}{% endfor %}"
+  data-rapid="{% for d in donors %}{{ 'true' if d.is_rapid else 'false' }}{% if not loop.last %}|{% endif %}{% endfor %}"
+  data-donations="{% for d in donors %}{{ d.total_donations or 0 }}{% if not loop.last %}|{% endif %}{% endfor %}">
+</div>
+
+  <!-- hero -->
+  <section class="fd-hero" id="top">
+    <div class="hero__bg" aria-hidden="true">
+      <div class="blob blob--1"></div>
+      <div class="blob blob--2"></div>
+      <div class="grid-overlay"></div>
+    </div>
+
+    <!-- floating medical icons -->
+    <div class="med-icons" aria-hidden="true">
+      <span class="med-icon" style="--i:0">🩸</span>
+      <span class="med-icon" style="--i:1">➕</span>
+      <span class="med-icon" style="--i:2">🫀</span>
+      <span class="med-icon" style="--i:3">🩺</span>
+      <span class="med-icon" style="--i:4">💉</span>
+      <span class="med-icon" style="--i:5">🏥</span>
+    </div>
+
+    <div class="container fd-hero__inner">
+      <span class="pill reveal" data-reveal>
+        <span class="pill__dot"></span> <strong id="onlineNow">—</strong>&nbsp;donors responding now
+      </span>
+      <h1 class="fd-hero__title reveal" data-reveal>
+        Find a Donor, <span class="grad-text">Fast.</span>
+      </h1>
+      <p class="fd-hero__lead reveal" data-reveal>
+        Search verified donors by blood type, city, urgency and real-time availability.
+        Every result is a person ready to help — let's get you matched in seconds.
+      </p>
+
+      <!-- live mini-stats -->
+      <div class="fd-livestats reveal" data-reveal>
+        <div class="fd-livestat glass">
+          <span class="fd-livestat__num" id="statAvailable">0</span>
+          <span class="fd-livestat__lbl">Available now</span>
+        </div>
+        <div class="fd-livestat glass">
+          <span class="fd-livestat__num" id="statTotal">0</span>
+          <span class="fd-livestat__lbl">Total donors</span>
+        </div>
+        <div class="fd-livestat glass">
+          <span class="fd-livestat__num" id="statCities">0</span>
+          <span class="fd-livestat__lbl">Cities covered</span>
+        </div>
+        <div class="fd-livestat glass">
+          <span class="fd-livestat__num"><span id="statResponse">0</span><small>min</small></span>
+          <span class="fd-livestat__lbl">Avg. response</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- search and filter bar -->
+  <section class="fd-search-section">
+    <div class="container">
+      <div class="fd-toolbar glass reveal" data-reveal>
+
+        <!-- big search bar -->
+        <div class="fd-search">
+          <svg class="fd-search__icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="searchInput" placeholder="Search by donor name or city…" autocomplete="off" aria-label="Search donors" />
+          <button class="fd-search__clear" id="searchClear" aria-label="Clear search" hidden>&times;</button>
+        </div>
+
+        <!-- filter row -->
+        <div class="fd-filters">
+          <div class="fd-filter">
+            <label for="bloodFilter">Blood type</label>
+            <select id="bloodFilter">
+              <option value="all">All types</option>
+              <option value="O-">O−</option>
+              <option value="O+">O+</option>
+              <option value="A-">A−</option>
+              <option value="A+">A+</option>
+              <option value="B-">B−</option>
+              <option value="B+">B+</option>
+              <option value="AB-">AB−</option>
+              <option value="AB+">AB+</option>
+            </select>
+          </div>
+
+          <div class="fd-filter">
+            <label for="cityFilter">City</label>
+            <select id="cityFilter">
+              <option value="all">All cities</option>
+            </select>
+          </div>
+
+          <div class="fd-filter">
+            <label for="urgencyFilter">Urgency</label>
+            <select id="urgencyFilter">
+              <option value="any">Any</option>
+              <option value="standard">Standard · ready soon</option>
+              <option value="urgent">Urgent · available now</option>
+              <option value="critical">Critical · rapid responders</option>
+            </select>
+          </div>
+
+          <div class="fd-filter">
+            <label for="availFilter">Availability</label>
+            <select id="availFilter">
+              <option value="all">All statuses</option>
+              <option value="available">🟢 Available</option>
+              <option value="maybe">🟡 Maybe</option>
+              <option value="unavailable">🔴 Unavailable</option>
+            </select>
+          </div>
+
+          <div class="fd-filter">
+            <label for="sortSelect">Sort by</label>
+            <select id="sortSelect">
+              <option value="availability">Availability</option>
+              <option value="response">Fastest response</option>
+              <option value="rested">Most rested</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- toggle and reset -->
+        <div class="fd-toolbar__foot">
+          <label class="fd-compat-toggle" for="compatToggle" title="Treat the blood type above as a patient's type and show only donors that can safely donate to them.">
+            <input type="checkbox" id="compatToggle" />
+            <span class="fd-compat-toggle__track"><span class="fd-compat-toggle__thumb"></span></span>
+            <span>Patient mode — show <strong>compatible</strong> donors for the selected type</span>
+          </label>
+          <button class="fd-reset" id="resetBtn" type="button">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v6h6"/><path d="M3.5 8a9 9 0 1 0 2.1-3.4L3 8"/></svg>
+            Reset filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- results -->
+  <section class="section fd-results-section">
+    <div class="container">
+      <div class="fd-results-head reveal" data-reveal>
+        <h2 id="resultCount">Searching…</h2>
+        <p id="resultNote" class="fd-results-note"></p>
+      </div>
+
+      <!-- donor cards added by js -->
+      <div class="fd-grid" id="donorGrid" aria-live="polite"></div>
+
+      <!-- empty state -->
+      <div class="fd-empty" id="emptyState" hidden>
+        <div class="fd-empty__art" aria-hidden="true">
+          <svg viewBox="0 0 120 120" width="120" height="120">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 8" opacity=".35"/>
+            <path d="M60 34C60 34 40 56 40 70a20 20 0 0 0 40 0C80 56 60 34 60 34Z" fill="currentColor" opacity=".18"/>
+            <path d="M60 34C60 34 40 56 40 70a20 20 0 0 0 40 0C80 56 60 34 60 34Z" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="34" y1="86" x2="86" y2="34" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>No donors match these filters</h3>
+        <p>Try widening your search — switch to a compatible blood type, pick a nearby city, or relax the urgency level.</p>
+        <button class="btn btn--glow" id="emptyReset" type="button">Clear all filters</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- map -->
+  <section class="section fd-map-section" id="map">
+    <div class="container">
+      <div class="section-head reveal" data-reveal>
+        <span class="eyebrow">Across Lebanon</span>
+        <h2>Donors near you, mapped live</h2>
+        <p class="section-sub">Tap a city to instantly filter the donors above. Pulsing markers have donors available right now.</p>
+      </div>
+
+      <div class="fd-map glass reveal" data-reveal>
+        <div class="fd-map__stage" id="mapStage">
+          <!-- lebanon shape -->
+          <svg class="fd-map__svg" viewBox="0 0 300 460" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <linearGradient id="landGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="var(--red-bright)" stop-opacity=".18"/>
+                <stop offset="100%" stop-color="var(--navy)" stop-opacity=".22"/>
+              </linearGradient>
+            </defs>
+            <path class="fd-map__land"
+              d="M150 8
+                 C176 14 196 30 205 54
+                 C214 78 210 104 224 126
+                 C238 148 256 160 258 188
+                 C260 216 244 238 248 266
+                 C252 296 268 318 258 348
+                 C250 374 224 386 206 408
+                 C190 428 178 448 156 452
+                 C134 456 120 440 108 420
+                 C96 400 92 376 80 356
+                 C66 332 44 320 42 292
+                 C40 262 60 240 58 212
+                 C56 182 38 162 44 132
+                 C49 106 72 94 86 72
+                 C100 50 110 22 150 8 Z"
+              fill="url(#landGrad)" stroke="currentColor" stroke-width="1.5" stroke-opacity=".5"/>
+            <!-- bekaa valley line -->
+            <path d="M150 70 C170 150 165 250 150 370" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 7" stroke-opacity=".35"/>
+          </svg>
+          <!-- city markers added by js -->
+          <div class="fd-map__markers" id="mapMarkers"></div>
+        </div>
+
+        <div class="fd-map__legend">
+          <span><i class="dot dot--available"></i> Available</span>
+          <span><i class="dot dot--maybe"></i> Maybe</span>
+          <span><i class="dot dot--unavailable"></i> Unavailable</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- bottom call to action -->
+  <section class="final-cta">
+    <div class="final-cta__bg" aria-hidden="true"></div>
+    <div class="container final-cta__inner reveal" data-reveal>
+      <h2>Can't find the match you need? <span class="grad-text">Grow the network.</span></h2>
+      <p>Every new donor makes the next emergency easier to solve. Share LifeLink — or register yourself.</p>
+      <a href="{{ url_for('auth.login') }}" class="btn btn--glow btn--lg">
+        Log in
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- quick contact modal -->
+  <div class="fd-modal" id="modal" hidden>
+    <div class="fd-modal__overlay" id="modalOverlay"></div>
+    <div class="fd-modal__card glass" role="dialog" aria-modal="true" aria-labelledby="modalName">
+      <button class="fd-modal__close" id="modalClose" aria-label="Close">&times;</button>
+      <div class="fd-modal__body" id="modalBody"><!-- filled by js --></div>
+    </div>
+  </div>
+
+  <!-- toast -->
+  <div class="fd-toast" id="toast" hidden></div>
+
+{% endblock %}
+
+{% block page_js %}
+  <script src="{{ url_for('static', filename='js/find-donor.js') }}"></script>
+{% endblock %}

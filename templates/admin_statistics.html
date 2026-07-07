@@ -1,0 +1,14 @@
+{% extends "base_admin.html" %}
+{% block title %}Statistics — LifeLink Admin{% endblock %}
+{% block admin_body %}
+  <h1>Donors by Blood Type</h1>
+  <div class="card">
+    <table>
+      <tr><th>Blood type</th><th>Donors</th></tr>
+      <!-- counts looks like { "O+": 3, "O-": 1, ... } -->
+      {% for blood_type, count in counts.items() %}
+        <tr><td>{{ blood_type }}</td><td>{{ count }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}

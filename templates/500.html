@@ -1,0 +1,9 @@
+{% extends "base_admin.html" %}
+{% block title %}500 — Server Error — LifeLink{% endblock %}
+{% block admin_body %}
+  <div class="card" style="text-align:center;">
+    <h1 style="font-size:2.4rem;color:#C1121F;">500 — Server Error</h1>
+    <p>Something went wrong on our side. Please try again.</p>
+    <a class="btn" href="{{ url_for('pages.index') }}">Back to Home</a>
+  </div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base_admin.html" %}
+{% block title %}Sign up — LifeLink{% endblock %}
+{% block admin_body %}
+  <div class="card" style="max-width:480px;margin:0 auto;">
+    <h1>Create your account</h1>
+    <form method="POST" action="{{ url_for('auth.signup') }}">
+      <label>Full name</label>
+      <input type="text" name="full_name" required />
+      <label>Email</label>
+      <input type="email" name="email" required />
+      <label>Password</label>
+      <input type="password" name="password" required />
+      <div style="display:flex; gap:10px; align-items:flex-start; margin:10px 0 14px;
+                  padding:12px 14px; border-radius:12px;
+                  background:rgba(193,18,31,.06); border:1px solid rgba(193,18,31,.18);
+                  border-left:3px solid var(--red, #C1121F);">
+        <span style="font-size:1.1rem; line-height:1;">🩸</span>
+        <span style="font-size:.86rem; line-height:1.45; color:var(--text-soft, #555);">
+          You'll be registered as
+          <strong style="color:var(--red-dark, #780000);">both a donor and a receiver</strong>
+          — you can give blood and also request it whenever you need.
+        </span>
+      </div>
+      <label>Blood type</label>
+      <select name="blood_type">
+        <option value="">Select</option>
+        <option>O+</option><option>O-</option><option>A+</option><option>A-</option>
+        <option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
+      </select>
+      <label>City</label>
+      <select name="city">
+        <option value="">Select your city</option>
+        <option>Tripoli</option>
+        <option>Byblos</option>
+        <option>Jounieh</option>
+        <option>Beirut</option>
+        <option>Baalbek</option>
+        <option>Zahle</option>
+        <option>Saida</option>
+        <option>Nabatieh</option>
+        <option>Tyre</option>
+      </select>
+      <label>Phone</label>
+      <input type="text" name="phone" />
+      <button class="btn" type="submit">Sign up</button>
+    </form>
+    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+  </div>
+{% endblock %}

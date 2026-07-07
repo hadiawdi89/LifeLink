@@ -1,0 +1,98 @@
+{% extends "base_admin.html" %}
+{% block title %}My Profile — LifeLink{% endblock %}
+{% block admin_body %}
+  <div class="card">
+    <h1>My Profile</h1>
+    <!-- current_user comes from flask-login -->
+    <p><b>Name:</b> {{ user.full_name }}</p>
+    <p><b>Email:</b> {{ user.email }}</p>
+    <p><b>Blood type:</b> {{ user.blood_type or "—" }}</p>
+    <p><b>City:</b> {{ user.city or "—" }}</p>
+    <p><b>Phone:</b> {{ user.phone or "—" }}</p>
+    <p><b>Role:</b> {{ user.role }}</p>
+  </div>
+
+  <div class="card">
+    <h2>Update details</h2>
+    <!-- edit profile -->
+    <form method="POST" action="{{ url_for('user.update_profile') }}">
+      <label>Full name</label>
+      <input type="text" name="full_name" value="{{ user.full_name }}" />
+      <label>Phone</label>
+      <input type="text" name="phone" value="{{ user.phone or '' }}" />
+      <label>City</label>
+      <select name="city">
+        <option value="">Select your city</option>
+        <option {% if user.city == 'Tripoli' %}selected{% endif %}>Tripoli</option>
+        <option {% if user.city == 'Byblos' %}selected{% endif %}>Byblos</option>
+        <option {% if user.city == 'Jounieh' %}selected{% endif %}>Jounieh</option>
+        <option {% if user.city == 'Beirut' %}selected{% endif %}>Beirut</option>
+        <option {% if user.city == 'Baalbek' %}selected{% endif %}>Baalbek</option>
+        <option {% if user.city == 'Zahle' %}selected{% endif %}>Zahle</option>
+        <option {% if user.city == 'Saida' %}selected{% endif %}>Saida</option>
+        <option {% if user.city == 'Nabatieh' %}selected{% endif %}>Nabatieh</option>
+        <option {% if user.city == 'Tyre' %}selected{% endif %}>Tyre</option>
+      </select>
+      <label>Blood type</label>
+      <input type="text" name="blood_type" value="{{ user.blood_type or '' }}" />
+      <button class="btn" type="submit">Save changes</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Donation history</h2>
+
+    <!-- log a new donation -->
+    <form method="POST" action="{{ url_for('donation.add_donation') }}" style="margin-bottom:18px;">
+      <label>Blood type for this donation</label>
+      <select name="blood_type">
+        <option value="O+" {% if user.blood_type == 'O+' %}selected{% endif %}>O+</option>
+        <option value="O-" {% if user.blood_type == 'O-' %}selected{% endif %}>O-</option>
+        <option value="A+" {% if user.blood_type == 'A+' %}selected{% endif %}>A+</option>
+        <option value="A-" {% if user.blood_type == 'A-' %}selected{% endif %}>A-</option>
+        <option value="B+" {% if user.blood_type == 'B+' %}selected{% endif %}>B+</option>
+        <option value="B-" {% if user.blood_type == 'B-' %}selected{% endif %}>B-</option>
+        <option value="AB+" {% if user.blood_type == 'AB+' %}selected{% endif %}>AB+</option>
+        <option value="AB-" {% if user.blood_type == 'AB-' %}selected{% endif %}>AB-</option>
+      </select>
+      <button class="btn" type="submit">Log a donation</button>
+    </form>
+
+    <!-- list this donor's donations -->
+    {% if history %}
+      <table>
+        <tr><th>#</th><th>Blood type</th><th>Date</th><th>Status</th><th>Action</th></tr>
+        {% for d in history %}
+          <tr>
+            <td>{{ d.id }}</td>
+            <td>{{ d.blood_type }}</td>
+            <td>{{ d.donation_date.strftime("%Y-%m-%d") }}</td>
+            <td>{{ d.status }}</td>
+            <td>
+              <!-- mark this donation completed -->
+              {% if d.status != "completed" %}
+                <form method="POST" action="{{ url_for('donation.update_status', donation_id=d.id) }}">
+                  <input type="hidden" name="status" value="completed" />
+                  <button class="btn" type="submit">Mark completed</button>
+                </form>
+              {% else %}
+                ✓ done
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p>No donations recorded yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2 style="color:#b00020;">Danger zone</h2>
+    <!-- delete account -->
+    <form method="POST" action="{{ url_for('user.delete_account') }}"
+          onsubmit="return confirm('Delete your account permanently?');">
+      <button class="btn btn--ghost" type="submit">Delete my account</button>
+    </form>
+  </div>
+{% endblock %}

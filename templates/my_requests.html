@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}My Requests — LifeLink{% endblock %}
+
+{% block page_css %}
+<style>
+  /* Centered column that clears the fixed navbar */
+  .reqwrap { max-width: 820px; margin: 0 auto; padding: 120px 20px 80px; }
+  .reqwrap h1 { margin-bottom: 6px; }
+  .reqlead { color: var(--text-soft); margin-bottom: 26px; }
+
+  /* One single card holding both sections */
+  .reqcard {
+    background: var(--surface-solid, #fff);
+    border: 1px solid var(--border, #e5e5e5);
+    border-radius: 18px;
+    padding: 26px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.06);
+  }
+  .reqcard__section + .reqcard__section {
+    margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--border, #e5e5e5);
+  }
+  .reqcard__title {
+    font-family: var(--font-display); font-size: 1.15rem; margin: 0 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .reqcard__count {
+    font-size: .8rem; font-weight: 600; color: #fff; background: var(--red);
+    border-radius: 999px; padding: 2px 10px;
+  }
+
+  /* A pending request block */
+  .reqitem { border: 1px solid var(--border, #e5e5e5); border-radius: 14px; padding: 16px 18px; }
+  .reqitem + .reqitem { margin-top: 14px; }
+  .reqitem__row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .reqitem__name { font-weight: 600; }
+  .reqitem__msg { color: var(--text-soft); margin: 10px 0 0; font-size: .92rem; }
+  .reqitem__meta { color: var(--text-soft); font-size: .82rem; margin-top: 6px; }
+  .reqitem__actions { display: flex; gap: 10px; margin-top: 14px; }
+  .reqitem__actions form { margin: 0; }
+
+  /* Small coloured pills */
+  .blood-pill {
+    font-weight: 700; color: var(--red); border: 1.5px solid var(--red);
+    border-radius: 10px; padding: 2px 10px; font-size: .9rem;
+  }
+  .status-pill { font-size: .78rem; font-weight: 600; border-radius: 999px; padding: 3px 11px; text-transform: capitalize; }
+  .status-pill.pending  { background: rgba(234,179,8,.16);  color: #a16207; }
+  .status-pill.approved { background: rgba(34,197,94,.16);  color: #15803d; }
+  .status-pill.rejected { background: rgba(239,68,68,.16);  color: #b91c1c; }
+
+  .reqempty { color: var(--text-soft); padding: 8px 2px; }
+
+  /* History rows */
+  .histrow {
+    display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+    padding: 12px 2px; border-bottom: 1px solid var(--border, #eee); font-size: .92rem;
+  }
+  .histrow:last-child { border-bottom: none; }
+  .histrow__arrow { color: var(--text-soft); }
+  .histrow__time { color: var(--text-soft); font-size: .82rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reqwrap">
+  <h1>My Requests</h1>
+  <p class="reqlead">Blood requests other members have sent to you, plus a history of everything.</p>
+
+  <div class="reqcard">
+
+    <!-- requests waiting for you -->
+    <div class="reqcard__section">
+      <h2 class="reqcard__title">
+        Pending requests for you
+        {% if pending %}<span class="reqcard__count">{{ pending|length }}</span>{% endif %}
+      </h2>
+
+      {% if pending %}
+        {% for req in pending %}
+          <div class="reqitem">
+            <div class="reqitem__row">
+              <span class="reqitem__name">{{ req.sender.full_name }}</span>
+              <span class="blood-pill">{{ req.blood_type }}</span>
+              <span class="status-pill pending">{{ req.status }}</span>
+            </div>
+            <p class="reqitem__msg">{{ req.message or "No message left." }}</p>
+            <div class="reqitem__meta">{{ req.sender.email }} · Sent {{ req.local_time }}</div>
+            <div class="reqitem__actions">
+              <form method="POST" action="{{ url_for('request.approve_request', req_id=req.id) }}">
+                <button type="submit" class="btn btn--glow">Approve</button>
+              </form>
+              <form method="POST" action="{{ url_for('request.reject_request', req_id=req.id) }}">
+                <button type="submit" class="btn btn--ghost">Reject</button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="reqempty">No pending requests right now.</p>
+      {% endif %}
+    </div>
+
+    <!-- past requests -->
+    <div class="reqcard__section">
+      <h2 class="reqcard__title">Request history</h2>
+
+      {% for req in history %}
+        <div class="histrow">
+          <strong>{{ req.sender.full_name if req.sender_id != current_user.id else "You" }}</strong>
+          <span class="histrow__arrow">→</span>
+          <strong>{{ req.donor.full_name if req.donor_id != current_user.id else "You" }}</strong>
+          <span class="blood-pill">{{ req.blood_type }}</span>
+          <span class="status-pill {{ req.status }}">{{ req.status }}</span>
+          <span class="histrow__time">{{ req.local_time }}</span>
+        </div>
+      {% else %}
+        <p class="reqempty">No requests yet.</p>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

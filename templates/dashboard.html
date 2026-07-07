@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — LifeLink{% endblock %}
+{% block description %}LifeLink Dashboard — registered donors, available donors and donations across Lebanon.{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+{% endblock %}
+
+{% block content %}
+
+  <!-- header -->
+  <section class="db-hero" id="top">
+    <div class="hero__bg" aria-hidden="true">
+      <div class="blob blob--1"></div>
+      <div class="blob blob--2"></div>
+      <div class="grid-overlay"></div>
+    </div>
+
+    <div class="container db-hero__bar">
+      <div class="db-hero__copy">
+        <span class="db-eyebrow">
+          <span class="db-eyebrow__dot"></span> Lebanon
+        </span>
+        <h1 class="db-hero__title">
+          LifeLink <span class="grad-text">Dashboard</span>
+        </h1>
+        <p class="db-hero__lead">
+          A simple overview of the network — registered donors, who is available now,
+          and how many donations have been made.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- stat cards -->
+  <section class="db-stats">
+    <div class="container">
+      <div class="db-statgrid">
+
+        <article class="db-stat glass">
+          <div class="db-stat__top">
+            <div class="db-stat__icon">👥</div>
+          </div>
+          <span class="db-stat__num" data-count="{{ stats.donors }}">0</span>
+          <p class="db-stat__lbl">Total registered donors</p>
+        </article>
+
+        <article class="db-stat glass">
+          <div class="db-stat__top">
+            <div class="db-stat__icon">🟢</div>
+          </div>
+          <span class="db-stat__num" data-count="{{ stats.available }}">0</span>
+          <p class="db-stat__lbl">Available donors now</p>
+        </article>
+
+        <article class="db-stat glass">
+          <div class="db-stat__top">
+            <div class="db-stat__icon">❤️</div>
+          </div>
+          <span class="db-stat__num" data-count="{{ stats.donations }}">0</span>
+          <p class="db-stat__lbl">Successful donations</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- shows how many donors are available right now (from the database) -->
+  <section class="db-section" style="padding: 30px 0 0;">
+    <div class="container">
+      <div class="db-panel glass">
+        <div class="db-panel__head">
+          <h3>🩸 Donor Availability</h3>
+        </div>
+        <div class="city-list">
+          <div class="city-row">
+            <div class="city-row__top">
+              <b>Donors available right now</b>
+              <span>{{ stats.available }} of {{ stats.donors }} · <b>{{ available_pct }}%</b></span>
+            </div>
+            <div class="city-track">
+              <span class="city-fill" style="width: {{ available_pct }}%;"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- quick links -->
+  <section class="db-section">
+    <div class="container">
+      <div class="db-panel glass">
+        <div class="db-panel__head">
+          <h3>⚡ Quick Links</h3>
+        </div>
+        <div class="qa-list">
+          <a class="qa-btn" href="{{ url_for('pages.find_donor') }}">
+            <span class="qa-btn__icon">🔎</span>
+            <span class="qa-btn__txt"><strong>Find a Donor</strong><span>Search registered donors near you</span></span>
+            <span class="qa-btn__arrow">→</span>
+          </a>
+          <a class="qa-btn" href="{{ url_for('request.my_requests') }}">
+            <span class="qa-btn__icon">📨</span>
+            <span class="qa-btn__txt"><strong>My Requests</strong><span>See requests sent to you</span></span>
+            <span class="qa-btn__arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- bottom call to action -->
+  <section class="final-cta">
+    <div class="final-cta__bg" aria-hidden="true"></div>
+    <div class="container final-cta__inner">
+      <h2>Behind every number is <span class="grad-text">a life waiting.</span></h2>
+      <p>Turn these stats into action — register today and be someone's match tomorrow.</p>
+      <a href="{{ url_for('auth.login') }}" class="btn btn--glow btn--lg">
+        Log in
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block page_js %}
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

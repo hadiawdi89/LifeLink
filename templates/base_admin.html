@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{# base_admin = the real site base.html PLUS simple table/card styling for the
+   admin & account pages. So every page (public AND admin) shares the same
+   navbar, footer and design — admin pages just add table styling on top. #}
+
+{% block page_css %}
+<style>
+
+  .admin-wrap { max-width: 980px; margin: 0 auto; padding: 110px 20px 70px; }
+  .admin-wrap h1 { margin-bottom: 18px; }
+  .admin-wrap h2 { margin: 4px 0 14px; }
+
+  .admin-wrap .card {
+    background: var(--surface-solid, #fff);
+    border: 1px solid var(--border, #eee);
+    border-radius: 16px; padding: 24px; margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  }
+
+  .admin-wrap table { width: 100%; border-collapse: collapse; }
+  .admin-wrap th, .admin-wrap td {
+    text-align: left; padding: 10px; border-bottom: 1px solid var(--border, #eee);
+  }
+
+  .admin-wrap label { display: block; font-weight: 600; margin-top: 8px; }
+  .admin-wrap input, .admin-wrap select {
+    width: 100%; padding: 10px; margin: 6px 0 14px;
+    border: 1.5px solid var(--border, #ddd); border-radius: 10px;
+    background: var(--surface-solid, #fff); color: inherit;
+  }
+
+  .admin-wrap .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px;
+  }
+  .admin-wrap .stat {
+    background: var(--red-dark, #780000); color: #fff;
+    border-radius: 14px; padding: 20px;
+  }
+  .admin-wrap .stat b { font-size: 2rem; display: block; }
+</style>
+{% endblock %}
+
+{% block content %}
+  <div class="admin-wrap">
+    {% block admin_body %}{% endblock %}
+  </div>
+{% endblock %}

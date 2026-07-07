@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}LifeLink — Connecting Blood Donors With Lives That Need Saving{% endblock %}
+{% block description %}LifeLink — connecting blood donors with lives that need saving across Lebanon.{% endblock %}
+
+{% block content %}
+
+  <!-- hero -->
+  <section class="hero" id="home">
+    <div class="hero__bg" aria-hidden="true">
+      <div class="blob blob--1"></div>
+      <div class="blob blob--2"></div>
+      <div class="grid-overlay"></div>
+    </div>
+
+    <div class="container hero__inner">
+      <div class="hero__copy">
+        <span class="pill reveal" data-reveal>
+          <span class="pill__dot"></span> Live across Lebanon · 24/7 response
+        </span>
+        <h1 class="hero__title reveal" data-reveal>
+          Connecting Blood Donors With
+          <span class="grad-text"> Lives That Need Saving.</span>
+        </h1>
+        <p class="hero__lead reveal" data-reveal>
+          When every second counts, LifeLink finds the right donor by blood type,
+          location, and availability — turning urgent need into a fast, human response.
+        </p>
+        <div class="hero__cta reveal" data-reveal>
+          <a href="{{ url_for('pages.find_donor') }}" class="btn btn--glow">
+            Find Donor
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          
+        </div>
+
+        <div class="hero__trust reveal" data-reveal>
+          <div class="avatars" aria-hidden="true">
+            <span style="--i:0">A</span><span style="--i:1">M</span><span style="--i:2">R</span><span style="--i:3">S</span>
+          </div>
+          <p>Trusted by <strong>2,500+ donors</strong> & <strong>45 hospitals</strong></p>
+        </div>
+      </div>
+
+      <!-- right side visual -->
+      <div class="hero__visual reveal" data-reveal>
+        <div class="drop-stage">
+          <div class="drop-glow"></div>
+          <div class="big-drop">
+            <svg viewBox="0 0 120 160" width="150" height="200" aria-hidden="true">
+              <defs>
+                <linearGradient id="dropGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#E63946"/>
+                  <stop offset="55%" stop-color="#C1121F"/>
+                  <stop offset="100%" stop-color="#780000"/>
+                </linearGradient>
+              </defs>
+              <path d="M60 4C60 4 8 64 8 104a52 52 0 0 0 104 0C112 64 60 4 60 4Z" fill="url(#dropGrad)"/>
+              <ellipse cx="44" cy="88" rx="14" ry="20" fill="rgba(255,255,255,.22)"/>
+            </svg>
+            <span class="drop-bpm">A+</span>
+          </div>
+
+          <!-- heartbeat line -->
+          <div class="heartbeat">
+            <svg viewBox="0 0 240 60" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="0,30 40,30 55,30 65,8 80,52 95,18 108,30 240,30"
+                fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <!-- floating cards -->
+          <div class="float-card float-card--a">
+            <span class="fc-icon">🩸</span>
+            <div><strong>O- needed</strong><small>Beirut · 2 km away</small></div>
+          </div>
+          <div class="float-card float-card--b">
+            <span class="fc-dot"></span>
+            <div><strong>Match found</strong><small>Donor responding…</small></div>
+          </div>
+          <div class="float-card float-card--c">
+            <strong>+18%</strong><small>donors this week</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- stats -->
+  <section class="section stats" id="stats">
+    <div class="container">
+      <div class="section-head reveal" data-reveal>
+        <span class="eyebrow">Impact in numbers</span>
+        <h2>Every number here is a heartbeat.</h2>
+      </div>
+
+      <div class="stats-grid">
+        <article class="stat-card glass reveal" data-reveal>
+          <div class="stat-card__icon">👥</div>
+          <span class="stat-num" data-count="{{ stats.donors }}" data-suffix="+">0</span>
+          <p>Registered donors</p>
+        </article>
+        <article class="stat-card glass reveal" data-reveal style="--d:.08s">
+          <div class="stat-card__icon">🏥</div>
+          <span class="stat-num" data-count="{{ stats.receivers }}" data-suffix="+">0</span>
+          <p>Registered patients</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- how it works -->
+  <section class="section how" id="how">
+    <div class="container">
+      <div class="section-head reveal" data-reveal>
+        <span class="eyebrow">How it works</span>
+        <h2>Four steps between a request and a rescue.</h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline__line" aria-hidden="true"><span></span></div>
+        <article class="step reveal" data-reveal>
+          <div class="step__num">01</div>
+          <div class="step__icon">📝</div>
+          <h3>Register</h3>
+          <p>Create a donor or hospital profile with your blood type and location in under a minute.</p>
+        </article>
+        <article class="step reveal" data-reveal style="--d:.1s">
+          <div class="step__num">02</div>
+          <div class="step__icon">🔎</div>
+          <h3>Search Donors</h3>
+          <p>Filter instantly by blood type, distance, and real-time availability.</p>
+        </article>
+        <article class="step reveal" data-reveal style="--d:.2s">
+          <div class="step__num">03</div>
+          <div class="step__icon">🤝</div>
+          <h3>Connect</h3>
+          <p>Send a verified request. Matched donors get notified and respond in minutes.</p>
+        </article>
+        <article class="step reveal" data-reveal style="--d:.3s">
+          <div class="step__num">04</div>
+          <div class="step__icon">💖</div>
+          <h3>Save Lives</h3>
+          <p>The donation happens, the patient is helped, and the impact is tracked.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- blood compatibility -->
+  <section class="section compat" id="compatibility">
+    <div class="container">
+      <div class="section-head reveal" data-reveal>
+        <span class="eyebrow">Find your match</span>
+        <h2>Blood compatibility checker</h2>
+        <p class="section-sub">Select a recipient blood type to see which donors can help.</p>
+      </div>
+
+      <div class="compat__wrap reveal" data-reveal>
+        <div class="compat__selector">
+          <p class="compat__label">I need blood for type:</p>
+          <div class="type-grid" id="typeGrid">
+            <!-- buttons added by js -->
+          </div>
+        </div>
+
+        <div class="compat__result glass">
+          <div class="compat__resultHead">
+            <span>Compatible donors for</span>
+            <strong id="selectedType">—</strong>
+          </div>
+          <div class="donor-types" id="donorTypes">
+            <p class="compat__hint">Pick a blood type on the left to begin.</p>
+          </div>
+          <div class="compat__meta" id="compatMeta"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ 
+
+  <!-- bottom call to action -->
+  <section class="final-cta">
+    <div class="final-cta__bg" aria-hidden="true"></div>
+    <div class="container final-cta__inner reveal" data-reveal>
+      <h2>Your blood could be someone's <span class="grad-text">second chance.</span></h2>
+      <p>It takes ten minutes to give. It lasts a lifetime for someone else.</p>
+      <a href="{{ url_for('auth.login') }}" class="btn btn--glow btn--lg">
+        Log in
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block page_js %}
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
